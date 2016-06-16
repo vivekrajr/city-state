@@ -2,6 +2,6 @@
 
 class CityState {
     public function sayCheese() {
-        return "Cheese!";
+        return "Cheesed!";
     }
 }
