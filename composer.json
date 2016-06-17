@@ -2,15 +2,16 @@
     "name": "vivekrajr/city-state",
     "description": "A package to get countries, states and cities",
     "require": {
-        "php": "^5.5.9 || ^7.0"
+        "php": "^5.5.9 || ^7.0",
+        "symfony/yaml": "^3.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.0.*"
+        "phpunit/phpunit": "~4.0"
     },
     "autoload": {
         "psr-4": {
-	    "Vivek\\CityState\\": "src/"
-	}
+	        "Vivek\\CityState\\": "src/"
+	    }
     },
     "license": "MIT",
     "authors": [
