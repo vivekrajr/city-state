@@ -8,6 +8,7 @@ use \Symfony\Component\Yaml\Yaml;
 class CS {
     
     private static $MAXMIND_ZIPPED_URL = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip";
+    private static $MAXMIND_ZIPPED_FILE = "../db/CityState.zip";
     private static $MAXMIND_DB_FILE = "../db/GeoLite2-City-Locations-en.csv";
     private static $COUNTRIES_FILE = "../db/countries.yml";
     
@@ -20,28 +21,41 @@ class CS {
     private static $CITY= 10;
     
     private static $countries = array();
+    private static $currentCountry;
     
     public static function updateMaxMind() {
         echo "Downloading file\n";
         //file_put_contents("../db/CityState.zip", fopen("http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip", 'r'));
     
         $zip = new ZipArchive;
-        
+
         $enFile;
-        
-        
+
         echo "Looking for CSV file\n";
-        if ($zip->open("../db/CityState.zip") === TRUE) {
+        if ($zip->open(self::$MAXMIND_ZIPPED_FILE) === true) {
             for($i = 0; $i < $zip->numFiles; $i++) {
                 $stat = $zip->statIndex( $i );      
                 if(strpos($stat['name'], 'GeoLite2-City-Locations-en') !== false) {
                     $enFile = $stat['name'];
+                    
+                    echo "Found english file\n";
+                    
+                    $zip->extractTo("../db/", $enFile);
                 }               
             }
+        } else {
+            echo "Could not open the zip file";
+            return;
         }
-        echo $enFile, "\n";
-        echo self::$MAXMIND_ZIPPED_URL, "\n";
+
+
+        //echo($enFile . "\n");
+
         $fileName = explode('/', $enFile)[1];
+        
+        //print_r($fileName);
+        
+        echo "\n";
         
         copy("../db/".$enFile, "../db/".$fileName); 
     }
@@ -52,6 +66,29 @@ class CS {
     }
     
     
+    public static function states($country) {
+        self::$currentCountry = country;
+        
+        $country = self::$currentCountry;
+        
+        
+    }
+    
+    
+    public static function install($country) {
+        if(!file_exists(self::$MAXMIND_DB_FILE)) {
+            self::updateMaxMind();
+        }
+        
+        $country = strtoupper($country);
+        
+        echo $country; 
+        
+        //TODO Include states-replace yml
+        
+        cities =   
+    }
+    
     //List all countries in the world from countries.yml
     public static function countries() {
         if(!file_exists(self::$COUNTRIES_FILE)) {
@@ -61,7 +98,8 @@ class CS {
                 //Whoops. MAXMIND_DB_FILE does not exist. Download and extract from zip
                 echo "No Maxmind CSV file. Redownloading";
                 
-                //TODO: Download and extract the CSV file;
+                //TODO Change logic to add one more step to check zip file
+                self::updateMaxMind();
                 
             }
             
@@ -102,4 +140,4 @@ class CS {
 
 //CS::generateCountries();
 
-CS::countries();
+CS::install("in");
